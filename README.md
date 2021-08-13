@@ -1,7 +1,7 @@
 # UEFI Funny cartoons
 
 Demo project.
-We insert additional submenus into the OVMF EDC.
+We insert additional submenus into the EDK2 OVMF.
 
 ## Download
 
