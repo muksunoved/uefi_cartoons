@@ -1,21 +1,21 @@
-# UEFI Funny cartoons
+## UEFI Funny cartoons
 
 Demo project.
 We insert additional submenus into the EDK2 OVMF.
 
-## Download
+### Download
 
 ```
 $ git clone <path to this repo>
 $ git submodule update --init --recursive 
 ```
-## Install dependencies
+### Install dependencies
 
 ```
 $ sudo apt-get install build-essential subversion uuid-dev iasl qemu
 ```
 
-## Build
+### Build
 
 OS: Ubuntu 18.04 gcc 7.5.0
 
@@ -31,7 +31,7 @@ $ cd ./uefi_cartoons/3rdparty/edk2
 $ ../../source/OvmfCartoonsPkg/build.sh -a X64
 ```
 
-## Run in QEMU
+### Run in QEMU
 
 [See](https://github.com/tianocore/tianocore.github.io/wiki/How-to-run-OVMF)
 
