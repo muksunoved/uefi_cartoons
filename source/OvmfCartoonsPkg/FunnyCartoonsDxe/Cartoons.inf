@@ -1,0 +1,62 @@
+## @file
+#  This driver show funny cartoons via HII.
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#  Copyright (C) 2021, Funny Cartoons.
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = FunnyCartoonsDxe
+  FILE_GUID                      = A58213B5-30A9-429A-A83D-2B9A4A3225D9
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = CartoonsInit
+  UNLOAD_IMAGE                   = CartoonsUnload
+
+[Sources]
+  Cartoons.c
+  CartoonsGuid.h
+  Cartoons.h
+  Cartoons.uni
+  CartoonsForms.vfr
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OvmfCartoonsPkg/OvmfPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  DevicePathLib
+  HiiLib
+  MemoryAllocationLib
+  PrintLib
+  UefiBootServicesTableLib
+  UefiHiiServicesLib
+  UefiLib
+  UefiRuntimeServicesTableLib
+  UefiDriverEntryPoint
+
+[Pcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution
+
+[Protocols]
+  gEfiDevicePathProtocolGuid      ## PRODUCES
+  gEfiGraphicsOutputProtocolGuid  ## CONSUMES
+  gEfiHiiConfigAccessProtocolGuid ## PRODUCES
+
+[Guids]
+  gEfiIfrTianoGuid
+  gFunnyCartoonsConfigGuid
+
+[Depex]
+  gEfiHiiConfigRoutingProtocolGuid  AND
+  gEfiHiiDatabaseProtocolGuid       AND
+  gEfiVariableArchProtocolGuid      AND
+  gEfiVariableWriteArchProtocolGuid

@@ -1,0 +1,25 @@
+// *++
+//
+// Copyright (C) 2021, Funny Cartoons.
+//
+// SPDX-License-Identifier: BSD-2-Clause-Patent
+//
+// Module Name:
+//   Cartoons.uni
+//
+// Abstract:
+//   String definitions for CartoonsForms.vfr
+//
+// --*/
+
+/=#
+
+#langdef en-US "English"
+
+#string STR_FORMSET_TITLE        #language en-US "Funny cartoons"
+#string STR_FORMSET_HELP         #language en-US "Show funny cartoons."
+#string STR_MAIN_FORM_TITLE      #language en-US "Funny catroons"
+#string STR_FRACTAL              #language en-US "Fractal"
+#string STR_FRACTAL_HELP         #language en-US "Show fractal image."
+#string STR_EXIT                 #language en-US "Exit to main"
+

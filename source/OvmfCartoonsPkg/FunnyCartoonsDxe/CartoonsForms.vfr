@@ -1,0 +1,48 @@
+// *++
+//
+// Copyright (C) 2021, Funny Cartoons.
+//
+// SPDX-License-Identifier: BSD-2-Clause-Patent
+//
+// Module Name:
+//
+//   CartoonsForms.vfr
+//
+// Abstract:
+//
+//   Form definitions for exposing via HII.
+//
+// --*/
+
+#include "CartoonsGuid.h"
+#include "Cartoons.h"
+
+formset
+  guid  = FUNNY_CARTOONS_CONFIG_GUID,
+  title = STRING_TOKEN(STR_FORMSET_TITLE),
+  help  = STRING_TOKEN(STR_FORMSET_HELP),
+
+  varstore MAIN_FORM_STATE,
+    varid = FORMSTATEID_MAIN_FORM,
+    name  = MainFormState,
+    guid  = FUNNY_CARTOONS_CONFIG_GUID;
+
+  form
+    formid = FORMID_MAIN_FORM,
+    title  = STRING_TOKEN(STR_MAIN_FORM_TITLE);
+
+    text
+      help  = STRING_TOKEN(STR_FRACTAL_HELP),
+      text  = STRING_TOKEN(STR_FRACTAL),
+      flags = INTERACTIVE,
+      key   = FRACTAL_KEY;
+
+    text
+      help  = STRING_TOKEN(STR_EXIT),
+      text  = STRING_TOKEN(STR_EXIT),
+      flags = INTERACTIVE,
+      key   = QUESTION_SAVE_EXIT;
+
+  endform;
+
+endformset;
