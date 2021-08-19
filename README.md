@@ -56,6 +56,11 @@ $ qemu-system-x86_64 -pflash bios.bin -hda fat:rw:hda-contents -net none
 In the emulator window, select sequentially (after exit from uefi shell) 
 ```Device Manager -> Funny Cartoons ...```
 Next, choose any menu from the available
+After show, press any key to return.
+
+### Screenshots
+
+![Fractal](./images/fractal.png)
 
 
 

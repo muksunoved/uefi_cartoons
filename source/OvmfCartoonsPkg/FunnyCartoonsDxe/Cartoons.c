@@ -20,8 +20,10 @@
 #include <Protocol/HiiConfigAccess.h>
 #include <Guid/MdeModuleHii.h>
 #include <Guid/OvmfPlatformConfig.h>
+#include <Library/UefiLib.h>
 
 #include "Cartoons.h"
+#include "Fractal.h"
 
 //
 // The HiiAddPackages() library function requires that any controller (or
@@ -182,6 +184,55 @@ RouteCartoonsConfig (
   return EFI_UNSUPPORTED;
 }
 
+STATIC
+EFI_STATUS
+EFIAPI
+GetGopSettings (
+  OUT INT32*  ScrWidth,
+  OUT INT32*  ScrHigh,
+  OUT UINT32* PixelsPerScanLine,
+  OUT UINT32** Buffer
+  )
+{
+  
+  EFI_STATUS                   Status;
+  EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop;
+
+  Status = gBS->LocateProtocol (&gEfiGraphicsOutputProtocolGuid, mGopTracker,
+                    (VOID **) &Gop);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
+  *ScrHigh  = Gop->Mode->Info->VerticalResolution;
+  *ScrWidth = Gop->Mode->Info->HorizontalResolution;
+  *PixelsPerScanLine = Gop->Mode->Info->PixelsPerScanLine;
+  *Buffer = (UINT32*)(UINTN)Gop->Mode->FrameBufferBase;
+
+  return Status;
+}    
+
+VOID 
+EFIAPI
+CleanScreen(
+  IN INT32 ScrWidth,
+  IN INT32 ScrHigh,
+  IN UINT32 PixelsPerScanLine,
+  IN UINT32* Buffer
+  )
+{
+  INT32 x = 0, y = 0, w = 0, h = 0;
+  UINTN coord;
+
+  w = ScrWidth;
+  h = ScrHigh;
+
+  for(x = 0; x < w; x++)  {
+    for(y = 0; y < h; y++)  {
+      coord = y * PixelsPerScanLine + x;
+      Buffer[coord] = 0x0;
+    }
+  }
+}
 
 STATIC
 EFI_STATUS
@@ -195,6 +246,23 @@ CartoonsCallback (
   OUT    EFI_BROWSER_ACTION_REQUEST             *ActionRequest
   )
 {
+  INT32             ScrWidth = 0;
+  INT32             ScrHigh = 0;
+  UINT32            PixelsPerScanLine = 0;
+  UINT32*           Buffer = NULL;
+  EFI_STATUS        Status;
+  EFI_INPUT_KEY     Key;
+  CHAR16                        *StringBuffer1;
+  CHAR16                        *StringBuffer2;
+
+  UINTN                         Size;
+
+  Size = 200;
+  StringBuffer1 = AllocateZeroPool (Size * sizeof(CHAR16));
+  ASSERT (StringBuffer1 != NULL);
+  StringBuffer2 = AllocateZeroPool (Size * sizeof(CHAR16));
+  ASSERT (StringBuffer2 != NULL);
+
   DEBUG ((DEBUG_VERBOSE, "%a: Action=0x%Lx QuestionId=%d Type=%d\n",
     __FUNCTION__, (UINT64) Action, QuestionId, Type));
 
@@ -208,6 +276,38 @@ CartoonsCallback (
     break;
 
   case FRACTAL_KEY:
+    Status = GetGopSettings(&ScrWidth, &ScrHigh, &PixelsPerScanLine, &Buffer);
+
+    if (EFI_ERROR (Status))  {
+      StrCpyS (StringBuffer1, Size, L"Eroor get GOP settings ");
+      StrCpyS (StringBuffer2, Size, L"Enter (YES)  /   Esc (NO)");
+
+      // 
+      // Popup a menu to notice user
+      //
+      do {
+        CreatePopUp (EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE, &Key, StringBuffer1, StringBuffer2, NULL);      
+      } while ((Key.ScanCode != SCAN_ESC) && (Key.UnicodeChar != CHAR_CARRIAGE_RETURN));
+
+      *ActionRequest = EFI_BROWSER_ACTION_REQUEST_NONE;
+      return EFI_SUCCESS;
+    }
+
+    CleanScreen(ScrWidth,ScrHigh, PixelsPerScanLine, Buffer);
+    DrawFractal(ScrWidth,ScrHigh, PixelsPerScanLine, Buffer);
+
+    
+    for (;;)  {
+      gBS->Stall((UINTN)(65536 / (105. / 88.)));  
+      
+      Status = gST->ConIn->ReadKeyStroke(gST->ConIn, &Key);
+      if (!EFI_ERROR(Status)) {
+        CleanScreen(ScrWidth,ScrHigh, PixelsPerScanLine, Buffer);
+        *ActionRequest = EFI_BROWSER_ACTION_REQUEST_NONE;
+        return EFI_SUCCESS;
+      }
+    }
+
     *ActionRequest = EFI_BROWSER_ACTION_REQUEST_FORM_SUBMIT_EXIT;
     break;
 

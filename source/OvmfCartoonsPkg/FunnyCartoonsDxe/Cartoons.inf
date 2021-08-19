@@ -22,6 +22,10 @@
   Cartoons.h
   Cartoons.uni
   CartoonsForms.vfr
+  CartoonsMathPriv.h
+  CartoonsMath.h
+  Fractal.h
+  Fractal.c
 
 [Packages]
   MdePkg/MdePkg.dec
