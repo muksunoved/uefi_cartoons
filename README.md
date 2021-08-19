@@ -60,7 +60,7 @@ After show, press any key to return.
 
 ### Screenshots
 
-![Fractal](./images/fractal.png)
+![Fractal](./images/fractal.png "Fractal")
 
 
 
