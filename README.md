@@ -29,6 +29,8 @@ Regular assembly:
 ```
 $ cd ./uefi_cartoons/3rdparty/edk2
 $ ../../source/OvmfCartoonsPkg/build.sh -a X64
+    or
+$ ../../source/OvmfCartoonsPkg/build.sh -a X64 -b RELEASE
 ```
 
 ### Run in QEMU
