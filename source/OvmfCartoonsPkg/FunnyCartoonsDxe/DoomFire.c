@@ -9,53 +9,48 @@
 #include "CartoonsPriv.h"
 #include "CartoonsMath.h"
 
-typedef struct {
-    UINT8 r;
-    UINT8 g;
-    UINT8 b;
-} RGBS;
 
 #define PALETTE_SIZE 37
 
 // Fire gradient palette
-static const RGBS RgbsPalette[PALETTE_SIZE] = {
-    { 0x07,0x07,0x07 },
-    { 0x1F,0x07,0x07 },
-    { 0x2F,0x0F,0x07 },
-    { 0x47,0x0F,0x07 },
-    { 0x57,0x17,0x07 },
-    { 0x67,0x1F,0x07 },
-    { 0x77,0x1F,0x07 },
-    { 0x8F,0x27,0x07 },
-    { 0x9F,0x2F,0x07 },
-    { 0xAF,0x3F,0x07 },
-    { 0xBF,0x47,0x07 },
-    { 0xC7,0x47,0x07 },
-    { 0xDF,0x4F,0x07 },
-    { 0xDF,0x57,0x07 },
-    { 0xDF,0x57,0x07 },
-    { 0xD7,0x5F,0x07 },
-    { 0xD7,0x5F,0x07 },
-    { 0xD7,0x67,0x0F },
-    { 0xCF,0x6F,0x0F },
-    { 0xCF,0x77,0x0F },
-    { 0xCF,0x7F,0x0F },
-    { 0xCF,0x87,0x17 },
-    { 0xC7,0x87,0x17 },
-    { 0xC7,0x8F,0x17 },
-    { 0xC7,0x97,0x1F },
-    { 0xBF,0x9F,0x1F },
-    { 0xBF,0x9F,0x1F },
-    { 0xBF,0xA7,0x27 },
-    { 0xBF,0xA7,0x27 },
-    { 0xBF,0xAF,0x2F },
-    { 0xB7,0xAF,0x2F },
-    { 0xB7,0xB7,0x2F },
-    { 0xB7,0xB7,0x37 },
-    { 0xCF,0xCF,0x6F },
-    { 0xDF,0xDF,0x9F },
-    { 0xEF,0xEF,0xC7 },
-    { 0xFF,0xFF,0xFF }
+static const UINT32 RgbsPalette[PALETTE_SIZE] = {
+     0x070707,
+     0x1F0707,
+     0x2F0F07,
+     0x470F07,
+     0x571707,
+     0x671F07,
+     0x771F07,
+     0x8F2707,
+     0x9F2F07,
+     0xAF3F07,
+     0xBF4707,
+     0xC74707,
+     0xDF4F07,
+     0xDF5707,
+     0xDF5707,
+     0xD75F07,
+     0xD75F07,
+     0xD7670F,
+     0xCF6F0F,
+     0xCF770F,
+     0xCF7F0F,
+     0xCF8717,
+     0xC78717,
+     0xC78F17,
+     0xC7971F,
+     0xBF9F1F,
+     0xBF9F1F,
+     0xBFA727,
+     0xBFA727,
+     0xBFAF2F,
+     0xB7AF2F,
+     0xB7B72F,
+     0xB7B737,
+     0xCFCF6F,
+     0xDFDF9F,
+     0xEFEFC7,
+     0xFFFFFF
 };
 
 static UINT8 *FirePixels;
@@ -110,28 +105,37 @@ GenerateSprite(
 STATIC
 VOID
 GenerateFire(
-  IN UINT32* Buffer
+  IN UINT32* Buffer,
+  IN UINT32 PixelsPerScanLine
         )
 {
-  UINTN i,j;
-  UINTN coord;
-  UINTN coordScale = 0;
-  UINT32 color;
+  UINT32 x,y, CoordScale, Coord;
+  UINT32 Color;
 
-  for (i=0; i<FireWidth; i++)  {
-      coordScale = i;
-      for (j=1; j<FireHeight; j++)  {
-        GenerateSprite(j*FireWidth + i);
-        coord = j * FireWidth + i;
-        color = RgbsPalette[FirePixels[coord]].r << 16 | RgbsPalette[FirePixels[coord]].g<<8 | RgbsPalette[FirePixels[coord]].b;
+  for (x=0; x<FireWidth; ++x)  {
+    CoordScale = x;
 
-        // Draw pixel
-        if (coordScale < FireWidth*FireHeight - FireWidth)  {
-          Buffer[coordScale] = color & 0xFFFFFF;
-          Buffer[coordScale+FireWidth] = color & 0xFFFFFF;
-        }
-        coordScale += FireWidth*2;
+    for (y=1; y<FireHeight; ++y)  {
+      GenerateSprite(y*FireWidth + x);
+    }
+  }
+
+  for (x=0; x<FireWidth; ++x)  {
+    CoordScale = x;
+
+    for (y=1; y<FireHeight; ++y)  {
+      Coord = y * FireWidth + x;
+      Color = RgbsPalette[FirePixels[Coord]];
+      Color &= 0xFFFFFF;
+
+      // Draw color to 2 vertical pixels
+      if (CoordScale < (FireWidth*FireHeight - FireWidth-1) && CoordScale >=0 )  {
+        Buffer[CoordScale] = Color;
+        CoordScale += FireWidth;
+        Buffer[CoordScale] = Color;
+        //CoordScale += FireWidth;
       }
+    }
   }
 }
 
@@ -151,7 +155,7 @@ DrawDoomFire(
   InitFirePixels(ScrWidth, ScrHeight);
 
   for (;;)  {
-    GenerateFire(Buffer);
+    GenerateFire(Buffer, PixelsPerScanLine);
 
     Status = gST->ConIn->ReadKeyStroke(gST->ConIn, &Key);
 
