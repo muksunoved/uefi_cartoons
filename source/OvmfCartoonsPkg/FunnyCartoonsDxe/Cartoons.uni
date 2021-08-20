@@ -21,5 +21,7 @@
 #string STR_MAIN_FORM_TITLE      #language en-US "Funny catroons"
 #string STR_FRACTAL              #language en-US "Fractal"
 #string STR_FRACTAL_HELP         #language en-US "Show fractal image."
+#string STR_DOOM_FIRE            #language en-US "Doom Fire"
+#string STR_DOOM_FIRE_HELP       #language en-US "Show DOOM fire."
 #string STR_EXIT                 #language en-US "Exit to main"
 

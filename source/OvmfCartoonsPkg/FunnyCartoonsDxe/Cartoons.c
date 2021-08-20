@@ -6,24 +6,11 @@
   SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
 
-#include <Library/BaseLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/DebugLib.h>
-#include <Library/DevicePathLib.h>
-#include <Library/HiiLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/PrintLib.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/UefiHiiServicesLib.h>
-#include <Protocol/DevicePath.h>
-#include <Protocol/GraphicsOutput.h>
-#include <Protocol/HiiConfigAccess.h>
-#include <Guid/MdeModuleHii.h>
-#include <Guid/OvmfPlatformConfig.h>
-#include <Library/UefiLib.h>
 
 #include "Cartoons.h"
+#include "CartoonsPriv.h"
 #include "Fractal.h"
+#include "DoomFire.h"
 
 //
 // The HiiAddPackages() library function requires that any controller (or
@@ -197,10 +184,27 @@ GetGopSettings (
   
   EFI_STATUS                   Status;
   EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop;
+  CHAR16                        *StringBuffer1;
+  CHAR16                        *StringBuffer2;
+  EFI_INPUT_KEY                 Key;
+  UINTN                         Size = 64;
+
+  StringBuffer1 = AllocateZeroPool (Size * sizeof(CHAR16));
+  ASSERT (StringBuffer1 != NULL);
+
+  StringBuffer2 = AllocateZeroPool (Size * sizeof(CHAR16));
+  ASSERT (StringBuffer2 != NULL);
 
   Status = gBS->LocateProtocol (&gEfiGraphicsOutputProtocolGuid, mGopTracker,
                     (VOID **) &Gop);
   if (EFI_ERROR (Status)) {
+    StrCpyS (StringBuffer1, Size, L"Error get GOP settings ");
+    StrCpyS (StringBuffer2, Size, L"Enter (YES)  /   Esc (NO)");
+
+    do {
+      CreatePopUp (EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE, &Key, StringBuffer1, StringBuffer2, NULL);      
+    } while ((Key.ScanCode != SCAN_ESC) && (Key.UnicodeChar != CHAR_CARRIAGE_RETURN));
+
     return Status;
   }
   *ScrHigh  = Gop->Mode->Info->VerticalResolution;
@@ -252,16 +256,6 @@ CartoonsCallback (
   UINT32*           Buffer = NULL;
   EFI_STATUS        Status;
   EFI_INPUT_KEY     Key;
-  CHAR16                        *StringBuffer1;
-  CHAR16                        *StringBuffer2;
-
-  UINTN                         Size;
-
-  Size = 200;
-  StringBuffer1 = AllocateZeroPool (Size * sizeof(CHAR16));
-  ASSERT (StringBuffer1 != NULL);
-  StringBuffer2 = AllocateZeroPool (Size * sizeof(CHAR16));
-  ASSERT (StringBuffer2 != NULL);
 
   DEBUG ((DEBUG_VERBOSE, "%a: Action=0x%Lx QuestionId=%d Type=%d\n",
     __FUNCTION__, (UINT64) Action, QuestionId, Type));
@@ -279,21 +273,13 @@ CartoonsCallback (
     Status = GetGopSettings(&ScrWidth, &ScrHigh, &PixelsPerScanLine, &Buffer);
 
     if (EFI_ERROR (Status))  {
-      StrCpyS (StringBuffer1, Size, L"Eroor get GOP settings ");
-      StrCpyS (StringBuffer2, Size, L"Enter (YES)  /   Esc (NO)");
-
-      // 
-      // Popup a menu to notice user
-      //
-      do {
-        CreatePopUp (EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE, &Key, StringBuffer1, StringBuffer2, NULL);      
-      } while ((Key.ScanCode != SCAN_ESC) && (Key.UnicodeChar != CHAR_CARRIAGE_RETURN));
 
       *ActionRequest = EFI_BROWSER_ACTION_REQUEST_NONE;
       return EFI_SUCCESS;
     }
 
     CleanScreen(ScrWidth,ScrHigh, PixelsPerScanLine, Buffer);
+    
     DrawFractal(ScrWidth,ScrHigh, PixelsPerScanLine, Buffer);
 
     
@@ -307,6 +293,21 @@ CartoonsCallback (
         return EFI_SUCCESS;
       }
     }
+
+    *ActionRequest = EFI_BROWSER_ACTION_REQUEST_FORM_SUBMIT_EXIT;
+    break;
+  case DOOM_FIRE_KEY:
+    Status = GetGopSettings(&ScrWidth, &ScrHigh, &PixelsPerScanLine, &Buffer);
+
+    if (EFI_ERROR (Status))  {
+      *ActionRequest = EFI_BROWSER_ACTION_REQUEST_NONE;
+      return EFI_SUCCESS;
+    }
+
+    CleanScreen(ScrWidth,ScrHigh, PixelsPerScanLine, Buffer);
+    DrawDoomFire(ScrWidth,ScrHigh, PixelsPerScanLine, Buffer);
+    CleanScreen(ScrWidth,ScrHigh, PixelsPerScanLine, Buffer);
+    
 
     *ActionRequest = EFI_BROWSER_ACTION_REQUEST_FORM_SUBMIT_EXIT;
     break;

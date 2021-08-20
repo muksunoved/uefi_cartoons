@@ -19,9 +19,10 @@
 #define MAXSIZE_RES_CUR       16
 
 #define FRACTAL_KEY            1
+#define DOOM_FIRE_KEY          2
 
-#define QUESTION_SAVE_EXIT     2
-#define QUESTION_DISCARD_EXIT  3
+#define QUESTION_SAVE_EXIT     3
+#define QUESTION_DISCARD_EXIT  4
 
 //
 // This structure describes the form state. Its fields relate strictly to the

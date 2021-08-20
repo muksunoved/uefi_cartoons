@@ -26,6 +26,8 @@
   CartoonsMath.h
   Fractal.h
   Fractal.c
+  DoomFire.h
+  DoomFire.c
 
 [Packages]
   MdePkg/MdePkg.dec
