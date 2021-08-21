@@ -109,7 +109,7 @@ GenerateFire(
   IN UINT32 PixelsPerScanLine
         )
 {
-  UINT32 x,y, CoordScale, Coord;
+  UINTN x,y, CoordScale, Coord;
   UINT32 Color;
 
   for (x=0; x<FireWidth; ++x)  {
@@ -123,17 +123,17 @@ GenerateFire(
   for (x=0; x<FireWidth; ++x)  {
     CoordScale = x;
 
-    for (y=1; y<FireHeight; ++y)  {
+    for (y = 1; y < FireHeight; ++y)  {
       Coord = y * FireWidth + x;
       Color = RgbsPalette[FirePixels[Coord]];
-      Color &= 0xFFFFFF;
 
       // Draw color to 2 vertical pixels
-      if (CoordScale < (FireWidth*FireHeight - FireWidth-1) && CoordScale >=0 )  {
-        Buffer[CoordScale] = Color;
+      if (CoordScale < (FireWidth * FireHeight - FireWidth-1)  )  {
+        Buffer[CoordScale ] = Color;
         CoordScale += FireWidth;
-        Buffer[CoordScale] = Color;
-        //CoordScale += FireWidth;
+        Buffer[CoordScale ] = Color;
+      // FIXME: Scale not worked
+      // CoordScale += FireWidth ;
       }
     }
   }

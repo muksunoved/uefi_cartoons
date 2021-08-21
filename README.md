@@ -62,7 +62,12 @@ After show, press any key to return.
 
 ### Screenshots
 
-![Fractal](./images/fractal.png "Fractal")
+Fractal      |  Doom Fire   
+-------------| --------------                        
+![Fractal](./images/fractal.png "Fractal") | ![Fractal](./images/firedoom.png "Doom fire") 
+
+
+
 
 
 
