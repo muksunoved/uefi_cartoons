@@ -22,8 +22,8 @@ OS: Ubuntu 18.04 gcc 7.5.0
 At first time (only required once):
 ```
 $ cd ./uefi_cartoons/3rdparty/edk2
-$ . edk_setup.sh
-$ make -C BuildTools
+$ . ./edk_setup.sh
+$ make -C ./BaseTools
 ```
 Regular assembly:
 ```
@@ -43,11 +43,11 @@ $ cd ~/run-ovmf
 $ mkdir -p ./hda-contents
 ```
 
-Copy build image from ```uefi_cartoons/3rdparty/edk2/Build/OvmfX64/DEBUG_GCC5/FV/OVMF.fd``` 
-to running directory
+Copy build image from ```uefi_cartoons/3rdparty/edk2/Build/OvmfX64/DEBUG_GCC5<or RELEASE_GCC5>/FV/OVMF.fd``` 
+to running directory ```~/run-ovmf```
 
 ```
-$ cp <path to repo>/3rdparty/edk2/Build/OvmfX64/DEBUG_GCC5/FV/OVMF.fd ~/run-ovmf
+$ cp <path to repo>/3rdparty/edk2/Build/OvmfX64/DEBUG_GCC5<or RELEASE_GCC5>/FV/OVMF.fd ~/run-ovmf/bios.bin
 ```
 
 Run qemu:
@@ -62,7 +62,12 @@ After show, press any key to return.
 
 ### Screenshots
 
-![Fractal](./images/fractal.png "Fractal")
+Fractal      |  Doom Fire   
+-------------| --------------                        
+![Fractal](./images/fractal.png "Fractal") | ![Fractal](./images/firedoom.png "Doom fire") 
+
+
+
 
 
 

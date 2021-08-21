@@ -38,6 +38,12 @@ formset
       key   = FRACTAL_KEY;
 
     text
+      help  = STRING_TOKEN(STR_DOOM_FIRE_HELP),
+      text  = STRING_TOKEN(STR_DOOM_FIRE),
+      flags = INTERACTIVE,
+      key   = DOOM_FIRE_KEY;
+
+    text
       help  = STRING_TOKEN(STR_EXIT),
       text  = STRING_TOKEN(STR_EXIT),
       flags = INTERACTIVE,
