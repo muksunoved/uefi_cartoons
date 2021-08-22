@@ -13,6 +13,7 @@ $ git submodule update --init --recursive
 
 ```
 $ sudo apt-get install build-essential subversion uuid-dev iasl qemu
+// for WSL 2 sudo apt-get install python
 ```
 
 ### Build
@@ -22,7 +23,8 @@ OS: Ubuntu 18.04 gcc 7.5.0
 At first time (only required once):
 ```
 $ cd ./uefi_cartoons/3rdparty/edk2
-$ . ./edk_setup.sh
+$ . ./edksetup.sh           
+// for WSL 2: sh . ./edksetup.sh
 $ make -C ./BaseTools
 ```
 Regular assembly:
