@@ -111,6 +111,8 @@ GenerateFire(
 {
   UINTN x,y, CoordScale, Coord;
   UINT32 Color;
+  UINT32 scale = 2;   // use this value to modify scale of image
+  UINT32 i;
 
   for (x=0; x<FireWidth; ++x)  {
     CoordScale = x;
@@ -121,19 +123,18 @@ GenerateFire(
   }
 
   for (x=0; x<FireWidth; ++x)  {
-    CoordScale = x;
+    CoordScale = x + FireWidth * (FireHeight - 1);
 
-    for (y = 1; y < FireHeight; ++y)  {
+    for (y = FireHeight - 1; y >= 1; --y)  {
       Coord = y * FireWidth + x;
       Color = RgbsPalette[FirePixels[Coord]];
 
       // Draw color to 2 vertical pixels
-      if (CoordScale < (FireWidth * FireHeight - FireWidth-1)  )  {
-        Buffer[CoordScale ] = Color;
-        CoordScale += FireWidth;
-        Buffer[CoordScale ] = Color;
-      // FIXME: Scale not worked
-      // CoordScale += FireWidth ;
+      for (i = 1; i <= scale; i++) {
+        if (CoordScale >= 0) {
+          Buffer[CoordScale] = Color;
+          CoordScale -= FireWidth;
+        }
       }
     }
   }
