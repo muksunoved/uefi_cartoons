@@ -11,6 +11,7 @@
 
 
 #define PALETTE_SIZE 37
+#define SCALE_FIRE_HEIGHT 3
 
 // Fire gradient palette
 static const UINT32 RgbsPalette[PALETTE_SIZE] = {
@@ -102,6 +103,7 @@ GenerateSprite(
     }
 }    
 
+
 STATIC
 VOID
 GenerateFire(
@@ -111,7 +113,6 @@ GenerateFire(
 {
   UINTN x,y, CoordScale, Coord;
   UINT32 Color;
-  UINT32 scale = 2;   // use this value to modify scale of image
   UINT32 i;
 
   for (x=0; x<FireWidth; ++x)  {
@@ -129,12 +130,14 @@ GenerateFire(
       Coord = y * FireWidth + x;
       Color = RgbsPalette[FirePixels[Coord]];
 
-      // Draw color to 2 vertical pixels
-      for (i = 1; i <= scale; i++) {
-        if (CoordScale >= 0) {
-          Buffer[CoordScale] = Color;
-          CoordScale -= FireWidth;
+      // Draw color to vertical pixels with scale
+      if (CoordScale >= FireWidth * SCALE_FIRE_HEIGHT) {
+        for (i = 0; i < SCALE_FIRE_HEIGHT; i++) {
+            Buffer[CoordScale] = Color;
+            CoordScale -= FireWidth;
         }
+      }  else {
+          break;
       }
     }
   }

@@ -309,7 +309,7 @@ CartoonsCallback (
     CleanScreen(ScrWidth,ScrHigh, PixelsPerScanLine, Buffer);
     
 
-    *ActionRequest = EFI_BROWSER_ACTION_REQUEST_FORM_SUBMIT_EXIT;
+    *ActionRequest = EFI_BROWSER_ACTION_REQUEST_NONE;
     break;
 
   default:
